@@ -5,15 +5,36 @@ Design a 32×32 register file with two read ports and one write port, with an as
 ### Module Specification
 
 ```SystemVerilog
-module register_file(
-    input  logic [4:0]  rs1_sel, rs2_sel,   // read addresses
-    input  logic        reg_write,          // write enable
-    input  logic        clk,
-    input  logic        reset,              // Asynchronous, active high
-    input  logic [31:0] wb_data,            // write data
-    input  logic [4:0]  rd_sel,             // write address
-    output logic [31:0] rs1_data, rs2_data  // read data
+module register_file #(parameter int DATA_WIDTH = 32)(
+    input  logic                  clk,
+    input  logic                  reset,        // Asynchronous active-high reset
+    input  logic                  reg_write,
+    input  logic [4:0]            rs1,
+    input  logic [4:0]            rs2,
+    input  logic [4:0]            rd,
+    input  logic [DATA_WIDTH-1:0] wd,
+    output logic [DATA_WIDTH-1:0] rs1_data,
+    output logic [DATA_WIDTH-1:0] rs2_data
 );
+
+    logic [DATA_WIDTH-1:0] rf [31:0];
+
+    // Asynchronous reset (clears every register using a loop for Yosys 0.33 compatibility)
+    always_ff @(posedge clk or posedge reset) begin
+        if (reset) begin
+            for (int i = 0; i < 32; i++) begin
+                rf[i] <= '0;
+            end
+        end else if (reg_write && (rd != 5'd0)) begin
+            rf[rd] <= wd;
+        end
+    end
+
+    // Combinational read with x0 hardwired to 0
+    assign rs1_data = (rs1 == 5'd0) ? '0 : rf[rs1];
+    assign rs2_data = (rs2 == 5'd0) ? '0 : rf[rs2];
+
+endmodule
 ```
 
 ### Working
