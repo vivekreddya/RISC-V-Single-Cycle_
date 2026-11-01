@@ -5,16 +5,24 @@ Design the write-back stage: it selects the value that is written to the registe
 ### Module Specification
 
 ```SystemVerilog
-module wb_stage(
-    input  logic [31:0] mem_out,           // data from data memory
+module wb_stage (
     input  logic [31:0] alu_out,
-    input  logic [31:0] return_addr,       // PC + 4
-    input  logic [31:0] imm_out,           // LUI immediate
-    input  logic [31:0] pc_signed_offset,  // PC + upper immediate (AUIPC)
+    input  logic [31:0] mem_data_out,
+    input  logic [31:0] pc_plus_4,
     input  logic [1:0]  memtoreg,
-    input  logic [6:0]  opcode_out_d,
     output logic [31:0] wb_data
 );
+
+    always_comb begin
+        unique case (memtoreg)
+            2'b00: wb_data = alu_out;
+            2'b01: wb_data = mem_data_out;
+            2'b10: wb_data = pc_plus_4;
+            default: wb_data = alu_out;
+        endcase
+    end
+
+endmodule
 ```
 
 ### Working
