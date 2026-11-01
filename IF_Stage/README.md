@@ -7,13 +7,35 @@ Design the instruction-fetch stage: the program counter register and the next-PC
 ```SystemVerilog
 module if_stage (
     input  logic        clk,
-    input  logic        reset,              // Asynchronous, active high
-    input  logic        stall,              // Hold the PC
-    input  logic        and_out,            // 1 = take branch/jump target
-    input  logic [31:0] pc_signed_offset,   // Branch / jump target address
-    output logic [31:0] address,            // Current PC
-    output logic [31:0] pc_new              // PC + 4
+    input  logic        reset,                // Asynchronous, active high
+    input  logic        stall,                // Hold the PC
+    input  logic        and_out,              // 1 = take branch/jump target
+    input  logic [31:0] pc_signed_offset,     // Branch / jump target address
+    output logic [31:0] address,              // Current PC
+    output logic [31:0] pc_new                // PC + 4
 );
+
+    logic [31:0] pc_reg;
+    logic [31:0] next_pc;
+
+    assign pc_new = pc_reg + 32'd4;
+    assign address = pc_reg;
+
+    always_comb begin
+        if (and_out)
+            next_pc = pc_signed_offset;
+        else
+            next_pc = pc_new;
+    end
+
+    always_ff @(posedge clk or posedge reset) begin
+        if (reset)
+            pc_reg <= 32'h8000_0000;          // PC resets to 32'h8000_0000
+        else if (!stall)
+            pc_reg <= next_pc;
+    end
+
+endmodule
 ```
 
 ### Working
