@@ -11,12 +11,24 @@ module decoder(
     output logic [4:0]  rs2,
     output logic [4:0]  rd,
     output logic [6:0]  opcode,
-    output logic [6:0]  imm11_5,      // instruction[31:25] (I-type ALU only)
+    output logic [6:0]  imm11_5,       // instruction[31:25]: shift qualifier / upper imm bits
     output logic [2:0]  fn3,
-    output logic [11:0] imm,          // I / S / B immediate bits
-    output logic [19:0] imm_uj,       // U / J immediate bits
-    output logic        fn7_5         // instruction[30] (R-type only)
+    output logic [11:0] imm,           // I / S / B immediate bits
+    output logic [19:0] imm_uj,        // U / J immediate bits
+    output logic        fn7_5          // instruction[30] (R-type only)
 );
+
+    assign opcode  = instruction[6:0];
+    assign rd      = instruction[11:7];
+    assign fn3     = instruction[14:12];
+    assign rs1     = instruction[19:15];
+    assign rs2     = instruction[24:20];
+    assign imm11_5 = instruction[31:25];
+    assign fn7_5   = instruction[30];
+    assign imm     = instruction[31:20];
+    assign imm_uj  = instruction[31:12];
+
+endmodule
 ```
 
 ### Working
