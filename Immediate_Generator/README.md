@@ -12,6 +12,24 @@ module imm_generator(
     input  logic [19:0] imm_input_uj,    // decoder `imm_uj`
     output logic [31:0] imm_output
 );
+
+    always_comb begin
+        unique case (opcode[6:2])
+            5'b00000, 5'b00100, 5'b11001: // I-type (Loads, ALU-imm, JALR)
+                imm_output = {{20{imm_input[11]}}, imm_input};
+            5'b01000: // S-type (Store)
+                imm_output = {{20{imm_input[11]}}, imm_input[11:5], imm_input[4:0]};
+            5'b11000: // B-type (Branch)
+                imm_output = {{19{imm_input[11]}}, imm_input[11], imm_input[0], imm_input[10:5], imm_input[4:1], 1'b0};
+            5'b01101, 5'b00101: // U-type (LUI, AUIPC)
+                imm_output = {imm_input_uj[19:0], 12'h000};
+            5'b11011: // J-type (JAL)
+                imm_output = {{11{imm_input_uj[19]}}, imm_input_uj[19], imm_input_uj[7:0], imm_input_uj[8], imm_input_uj[18:9], 1'b0};
+            default:
+                imm_output = 32'd0;
+        endcase
+    end
+endmodule
 ```
 
 ### Working
