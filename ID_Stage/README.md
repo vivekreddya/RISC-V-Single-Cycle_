@@ -27,58 +27,7 @@ module id_stage(
     output logic        mux_inp
 );
 
-    logic [4:0]  rs1, rs2, rd;
-    logic [11:0] imm;
-    logic [19:0] imm_uj;
-    logic        reg_write_ctrl;
 
-    decoder dec (
-        .instruction(instruction),
-        .rs1(rs1),
-        .rs2(rs2),
-        .rd(rd),
-        .opcode(opcode_out_d),
-        .imm11_5(imm11_5),
-        .fn3(fn3_out_d),
-        .imm(imm),
-        .imm_uj(imm_uj),
-        .fn7_5(fn7_5)
-    );
-
-    main_control ctrl (
-        .opcode(opcode_out_d),
-        .fn3(fn3_out_d),
-        .memtoreg(memtoreg),
-        .branch(branch),
-        .mux_inp(mux_inp),
-        .memread(mem_read),
-        .memwrite(mem_write),
-        .alusrc(alusrc),
-        .reg_write(reg_write_ctrl),
-        .aluop(aluop)
-    );
-
-    register_file rf (
-        .clk(clk),
-        .reset(reset),
-        .reg_write(reg_write_ctrl & ~stall),
-        .rs1(rs1),
-        .rs2(rs2),
-        .rd(rd),
-        .wd(wb_data),
-        .rs1_data(rs1_data),
-        .rs2_data(rs2_data)
-    );
-
-    imm_generator imm_gen (
-        .imm_input(imm),
-        .fn3(fn3_out_d),
-        .opcode(opcode_out_d),
-        .imm_input_uj(imm_uj),
-        .imm_output(imm_out)
-    );
-
-endmodule
 ```
 
 ### Working
