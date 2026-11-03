@@ -17,24 +17,6 @@ module register_file #(parameter int DATA_WIDTH = 32)(
     output logic [DATA_WIDTH-1:0] rs2_data
 );
 
-    logic [DATA_WIDTH-1:0] rf [31:0];
-
-    // Asynchronous reset (clears every register using a loop for Yosys 0.33 compatibility)
-    always_ff @(posedge clk or posedge reset) begin
-        if (reset) begin
-            for (int i = 0; i < 32; i++) begin
-                rf[i] <= '0;
-            end
-        end else if (reg_write && (rd != 5'd0)) begin
-            rf[rd] <= wd;
-        end
-    end
-
-    // Combinational read with x0 hardwired to 0
-    assign rs1_data = (rs1 == 5'd0) ? '0 : rf[rs1];
-    assign rs2_data = (rs2 == 5'd0) ? '0 : rf[rs2];
-
-endmodule
 ```
 
 ### Working
