@@ -18,17 +18,6 @@ module decoder(
     output logic        fn7_5          // instruction[30] (R-type only)
 );
 
-    assign opcode  = instruction[6:0];
-    assign rd      = instruction[11:7];
-    assign fn3     = instruction[14:12];
-    assign rs1     = instruction[19:15];
-    assign rs2     = instruction[24:20];
-    assign imm11_5 = instruction[31:25];
-    assign fn7_5   = instruction[30];
-    assign imm     = instruction[31:20];
-    assign imm_uj  = instruction[31:12];
-
-endmodule
 ```
 
 ### Working
