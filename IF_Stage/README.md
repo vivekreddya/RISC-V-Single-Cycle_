@@ -15,27 +15,6 @@ module if_stage (
     output logic [31:0] pc_new                // PC + 4
 );
 
-    logic [31:0] pc_reg;
-    logic [31:0] next_pc;
-
-    assign pc_new = pc_reg + 32'd4;
-    assign address = pc_reg;
-
-    always_comb begin
-        if (and_out)
-            next_pc = pc_signed_offset;
-        else
-            next_pc = pc_new;
-    end
-
-    always_ff @(posedge clk or posedge reset) begin
-        if (reset)
-            pc_reg <= 32'h8000_0000;          // PC resets to 32'h8000_0000
-        else if (!stall)
-            pc_reg <= next_pc;
-    end
-
-endmodule
 ```
 
 ### Working
